@@ -24,6 +24,9 @@ export default async function NavigationSidebar() {
         },
       },
     },
+    orderBy: {
+      createdAt: 'asc',
+    },
   })
 
   return (
