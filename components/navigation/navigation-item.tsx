@@ -19,7 +19,12 @@ export default function NavigationItem({
 
   return (
     <ActionTooltip align="center" side="right" label={name}>
-      <button onClick={() => {}} className="group relative flex items-center">
+      <button
+        onClick={() => {
+          router.push(`/servers/${id}`)
+        }}
+        className="group relative flex items-center"
+      >
         <div
           className={cn(
             'absolute left-0 w-[4px] rounded-r-full bg-primary transition-all',
