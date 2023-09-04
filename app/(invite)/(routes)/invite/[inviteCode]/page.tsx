@@ -33,24 +33,46 @@ export default async function InviteCodePage({
     return redirect(`/servers/${existingServer.id}}`)
   }
 
-  const server = await prisma.server.update({
-    where: {
-      inviteCode: params.inviteCode,
-    },
-    data: {
-      members: {
-        create: [
-          {
-            profileId: profile.id,
-          },
-        ],
+  try {
+    const server = await prisma.server.update({
+      where: {
+        inviteCode: params.inviteCode,
       },
-    },
-  })
+      data: {
+        members: {
+          create: [
+            {
+              profileId: profile.id,
+            },
+          ],
+        },
+      },
+    })
 
-  if (server) {
-    return redirect(`/servers/${server.id}`)
+    if (server) {
+      return redirect(`/servers/${server.id}`)
+    }
+  } catch {
+    return (
+      <div className="mx-auto mt-4 flex max-w-lg flex-col space-y-2">
+        <h2 className="text-center text-2xl font-semibold">
+          Invalid invite code
+        </h2>
+        <p className="text-sm">
+          The current invite code is invalid. Please contact your admin for
+          support.
+        </p>
+      </div>
+    )
   }
 
-  return null
+  return (
+    <div className="mx-auto mt-4 flex max-w-lg flex-col space-y-2">
+      <h2 className="text-2xl font-semibold">Invalid invite code</h2>
+      <p className="text-sm">
+        The current invite code is invalid. Please contact your admin for
+        support.
+      </p>
+    </div>
+  )
 }
