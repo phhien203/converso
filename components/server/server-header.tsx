@@ -64,7 +64,10 @@ export default function ServerHeader({
         )}
 
         {isAdmin && (
-          <DropdownMenuItem className="cursor-pointer px-3 py-2 text-sm">
+          <DropdownMenuItem
+            className="cursor-pointer px-3 py-2 text-sm"
+            onClick={() => onOpen('members', { server })}
+          >
             Manage Members
             <UsersIcon className="ml-auto h-4 w-4" />
           </DropdownMenuItem>
