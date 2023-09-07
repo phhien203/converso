@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import UserAvatar from '@/components/user-avatar'
 import { useModal } from '@/hooks/use-modal-store'
 import { ServerWithMembersWithProfiles } from '@/types'
 
@@ -30,13 +31,14 @@ export default function MembersModal() {
           </DialogTitle>
 
           <DialogDescription className="text-center text-zinc-500">
-            {server.members?.length} Member(s)
+            {server?.members?.length} Member(s)
           </DialogDescription>
         </DialogHeader>
 
         <ScrollArea className="mt-8 max-h-[420px] pr-6">
-          {server.members?.map((member) => (
+          {server?.members?.map((member) => (
             <div key={member.id} className="mb-6 flex items-center gap-x-2">
+              <UserAvatar src={member.profile.imageUrl} />
               {member.profile.name}
             </div>
           ))}
