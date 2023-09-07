@@ -106,6 +106,16 @@ export async function DELETE(
           },
         },
       },
+      include: {
+        members: {
+          include: {
+            profile: true,
+          },
+          orderBy: {
+            role: 'asc',
+          },
+        },
+      },
     })
 
     return NextResponse.json(server)
