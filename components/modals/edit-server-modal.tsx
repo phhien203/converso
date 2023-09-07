@@ -71,7 +71,6 @@ export default function EditServerModal() {
   }
 
   const handleClose = () => {
-    form.reset()
     onClose()
   }
 
