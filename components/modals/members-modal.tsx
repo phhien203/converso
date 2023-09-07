@@ -1,6 +1,15 @@
 'use client'
 
-import { ShieldAlertIcon, ShieldCheckIcon } from 'lucide-react'
+import {
+  CheckIcon,
+  GavelIcon,
+  Loader2,
+  MoreVerticalIcon,
+  ShieldAlertIcon,
+  ShieldCheckIcon,
+  ShieldIcon,
+  ShieldQuestionIcon,
+} from 'lucide-react'
 import React from 'react'
 
 import {
@@ -10,6 +19,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import UserAvatar from '@/components/user-avatar'
 import { useModal } from '@/hooks/use-modal-store'
@@ -29,10 +49,18 @@ const roleIconMap = {
 export default function MembersModal() {
   const { isOpen, onClose, onOpen, type, data } = useModal()
   const { server } = data as { server: ServerWithMembersWithProfiles }
-
-  const [isLoading, setIsLoading] = React.useState(false)
-
+  const [loadingId, setLoadingId] = React.useState('')
   const isModalOpen = isOpen && type === 'members'
+
+  const onRoleChange = async (memberId: string, newRole: MemberRole) => {
+    try {
+      setLoadingId(memberId)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoadingId('')
+    }
+  }
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
@@ -60,6 +88,57 @@ export default function MembersModal() {
 
                 <p className="text-xs text-zinc-500">{member.profile.email}</p>
               </div>
+
+              {server.profileId !== member.profileId &&
+                loadingId !== member.id && (
+                  <div className="ml-auto">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <MoreVerticalIcon className="h-4 w-4 text-zinc-500" />
+                      </DropdownMenuTrigger>
+
+                      <DropdownMenuContent side="left">
+                        <DropdownMenuSub>
+                          <DropdownMenuSubTrigger className="flex items-center">
+                            <ShieldQuestionIcon className="mr-2 h-4 w-4" />
+                            <span>Role</span>
+                          </DropdownMenuSubTrigger>
+
+                          <DropdownMenuPortal>
+                            <DropdownMenuSubContent>
+                              <DropdownMenuItem>
+                                <ShieldIcon className="mr-2 h-4 w-4" />
+                                Guest
+                                {member.role === 'GUEST' && (
+                                  <CheckIcon className="ml-auto h-4 w-4" />
+                                )}
+                              </DropdownMenuItem>
+
+                              <DropdownMenuItem>
+                                <ShieldCheckIcon className="mr-2 h-4 w-4" />
+                                Moderator
+                                {member.role === 'MODERATOR' && (
+                                  <CheckIcon className="ml-auto h-4 w-4" />
+                                )}
+                              </DropdownMenuItem>
+                            </DropdownMenuSubContent>
+                          </DropdownMenuPortal>
+                        </DropdownMenuSub>
+
+                        <DropdownMenuSeparator />
+
+                        <DropdownMenuItem>
+                          <GavelIcon className="mr-2 h-4 w-4" />
+                          Kick
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                )}
+
+              {loadingId === member.id && (
+                <Loader2 className="ml-auto h-4 w-4 animate-spin text-zinc-500" />
+              )}
             </div>
           ))}
         </ScrollArea>
