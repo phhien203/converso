@@ -1,5 +1,6 @@
 'use client'
 
+import { ShieldAlertIcon, ShieldCheckIcon } from 'lucide-react'
 import React from 'react'
 
 import {
@@ -13,6 +14,17 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import UserAvatar from '@/components/user-avatar'
 import { useModal } from '@/hooks/use-modal-store'
 import { ServerWithMembersWithProfiles } from '@/types'
+import { MemberRole } from '@prisma/client'
+
+const roleIconMap = {
+  [MemberRole.GUEST]: null,
+  [MemberRole.MODERATOR]: (
+    <ShieldCheckIcon className="ml-2 h-4 w-4 text-indigo-500" />
+  ),
+  [MemberRole.ADMIN]: (
+    <ShieldAlertIcon className="ml-2 h-4 w-4 text-rose-500" />
+  ),
+}
 
 export default function MembersModal() {
   const { isOpen, onClose, onOpen, type, data } = useModal()
@@ -24,7 +36,7 @@ export default function MembersModal() {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
-      <DialogContent className="overflow-hidden bg-white p-0 text-black">
+      <DialogContent className="overflow-hidden bg-white text-black">
         <DialogHeader className="px-6 pt-8">
           <DialogTitle className="text-center text-2xl font-bold">
             Manage Members
@@ -39,7 +51,15 @@ export default function MembersModal() {
           {server?.members?.map((member) => (
             <div key={member.id} className="mb-6 flex items-center gap-x-2">
               <UserAvatar src={member.profile.imageUrl} />
-              {member.profile.name}
+
+              <div className="flex flex-col gap-y-1">
+                <div className="flex items-center text-xs font-semibold">
+                  {member.profile.name}
+                  {roleIconMap[member.role]}
+                </div>
+
+                <p className="text-xs text-zinc-500">{member.profile.email}</p>
+              </div>
             </div>
           ))}
         </ScrollArea>
