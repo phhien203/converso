@@ -68,3 +68,49 @@ export async function PATCH(
     return new NextResponse('Internal error', { status: 500 })
   }
 }
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { memberId: string } },
+) {
+  try {
+    const { searchParams } = new URL(req.url)
+    const serverId = searchParams.get('serverId')
+
+    if (!serverId) {
+      return new NextResponse('ServerId missing', { status: 400 })
+    }
+
+    if (!params.memberId) {
+      return new NextResponse('MemberId missing', { status: 400 })
+    }
+
+    const profile = await currentProfile()
+
+    if (!profile) {
+      return new NextResponse('Unauthorized', { status: 401 })
+    }
+
+    const server = await prisma.server.update({
+      where: {
+        id: serverId,
+        profileId: profile.id,
+      },
+      data: {
+        members: {
+          deleteMany: {
+            id: params.memberId,
+            profileId: {
+              not: profile.id,
+            },
+          },
+        },
+      },
+    })
+
+    return NextResponse.json(server)
+  } catch (error) {
+    console.log('[MEMBERS_ID_PATCH]', error)
+    return new NextResponse('Internal error', { status: 500 })
+  }
+}

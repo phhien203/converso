@@ -77,6 +77,28 @@ export default function MembersModal() {
     }
   }
 
+  const onKick = async (memberId: string) => {
+    try {
+      setLoadingId(memberId)
+
+      const url = qs.stringifyUrl({
+        url: `/api/members/${memberId}`,
+        query: {
+          serverId: server?.id,
+        },
+      })
+
+      const res = await axios.delete(url)
+
+      router.refresh()
+      onOpen('members', { server: res.data })
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoadingId('')
+    }
+  }
+
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
       <DialogContent className="overflow-hidden bg-white text-black">
@@ -122,6 +144,7 @@ export default function MembersModal() {
                           <DropdownMenuPortal>
                             <DropdownMenuSubContent>
                               <DropdownMenuItem
+                                className="cursor-pointer"
                                 onClick={() => onRoleChange(member.id, 'GUEST')}
                               >
                                 <ShieldIcon className="mr-2 h-4 w-4" />
@@ -132,6 +155,7 @@ export default function MembersModal() {
                               </DropdownMenuItem>
 
                               <DropdownMenuItem
+                                className="cursor-pointer"
                                 onClick={() =>
                                   onRoleChange(member.id, 'MODERATOR')
                                 }
@@ -148,7 +172,10 @@ export default function MembersModal() {
 
                         <DropdownMenuSeparator />
 
-                        <DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => onKick(member.id)}
+                        >
                           <GavelIcon className="mr-2 h-4 w-4" />
                           Kick
                         </DropdownMenuItem>
