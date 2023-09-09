@@ -57,7 +57,7 @@ export default function DeleteChannelModal() {
             <br />
             Channel{' '}
             <span className="font-semibold text-indigo-500">
-              {channel?.name}
+              #{channel?.name}
             </span>{' '}
             will be permanently deleted.
           </DialogDescription>
