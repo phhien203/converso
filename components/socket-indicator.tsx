@@ -1,22 +1,43 @@
 'use client'
 
 import { useSocket } from '@/components/providers/socket-provider'
-import { Badge } from '@/components/ui/badge'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 export default function SocketIndicator() {
   const { isConnected } = useSocket()
 
   if (!isConnected) {
     return (
-      <Badge variant="outline" className="border-none bg-yellow-600 text-white">
-        Fallback: Polling every 1s
-      </Badge>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="h-2 w-2 rounded-full bg-yellow-600"></div>
+          </TooltipTrigger>
+
+          <TooltipContent>
+            <div className="text-xs">Polling every 1s</div>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     )
   }
 
   return (
-    <Badge variant="outline" className="border-none bg-emerald-600 text-white">
-      Live: Real time updates
-    </Badge>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <div className="h-2 w-2 rounded-full bg-emerald-600"></div>
+        </TooltipTrigger>
+
+        <TooltipContent>
+          <div className="text-xs">Real time updates</div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
 }
