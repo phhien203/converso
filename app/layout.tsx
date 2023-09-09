@@ -6,6 +6,7 @@ import ModalProvider from '@/components/providers/modal-provider'
 import ThemeProvider from '@/components/providers/theme-provider'
 import { cn } from '@/lib/utils'
 
+import { SocketProvider } from '@/components/providers/socket-provider'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -30,8 +31,10 @@ export default function RootLayout({
             enableSystem={false}
             storageKey="converso-theme"
           >
-            <ModalProvider />
-            {children}
+            <SocketProvider>
+              <ModalProvider />
+              {children}
+            </SocketProvider>
           </ThemeProvider>
         </body>
       </html>
