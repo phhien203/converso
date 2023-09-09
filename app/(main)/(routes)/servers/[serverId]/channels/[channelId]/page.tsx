@@ -2,7 +2,6 @@ import ChatHeader from '@/components/chat/chat-header'
 import { currentProfile } from '@/lib/current-profile'
 import { prisma } from '@/lib/db'
 import { redirectToSignIn } from '@clerk/nextjs'
-import { channel } from 'diagnostics_channel'
 import { redirect } from 'next/navigation'
 
 export default async function ChannelIdPage({
@@ -16,9 +15,9 @@ export default async function ChannelIdPage({
     return redirectToSignIn()
   }
 
-  const server = await prisma.server.findUnique({
+  const channel = await prisma.channel.findUnique({
     where: {
-      id: params.serverId,
+      id: params.channelId,
     },
   })
 
@@ -29,13 +28,17 @@ export default async function ChannelIdPage({
     },
   })
 
-  if (!server || !member) {
+  if (!channel || !member) {
     return redirect(`/`)
   }
 
   return (
     <div className="flex h-full flex-col bg-white dark:bg-[#313338]">
-      <ChatHeader serverId={server.id} type="channel" name={channel.name} />
+      <ChatHeader
+        type="channel"
+        name={channel.name}
+        serverId={channel.serverId}
+      />
     </div>
   )
 }
