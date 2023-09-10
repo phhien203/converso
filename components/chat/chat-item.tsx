@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import UserAvatar from '@/components/user-avatar'
+import { useModal } from '@/hooks/use-modal-store'
 import { cn } from '@/lib/utils'
 import axios from 'axios'
 import Image from 'next/image'
@@ -63,7 +64,7 @@ export default function ChatItem({
   timestamp,
 }: Props) {
   const [isEditing, setIsEditing] = React.useState(false)
-  const [isDeleting, setIsDeleting] = React.useState()
+  const { onOpen } = useModal()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -238,7 +239,15 @@ export default function ChatItem({
           )}
 
           <ActionTooltip label="Delete">
-            <TrashIcon className="ml-auto h-4 w-4 cursor-pointer text-zinc-500 transition hover:text-zinc-600 dark:hover:text-zinc-300" />
+            <TrashIcon
+              className="ml-auto h-4 w-4 cursor-pointer text-zinc-500 transition hover:text-zinc-600 dark:hover:text-zinc-300"
+              onClick={() =>
+                onOpen('deleteMessage', {
+                  apiUrl: `${socketUrl}/${id}`,
+                  query: socketQuery,
+                })
+              }
+            />
           </ActionTooltip>
         </div>
       )}
