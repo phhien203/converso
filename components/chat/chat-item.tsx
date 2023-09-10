@@ -22,6 +22,7 @@ import { useModal } from '@/hooks/use-modal-store'
 import { cn } from '@/lib/utils'
 import axios from 'axios'
 import Image from 'next/image'
+import { useParams, useRouter } from 'next/navigation'
 import React from 'react'
 
 interface Props {
@@ -63,8 +64,11 @@ export default function ChatItem({
   socketUrl,
   timestamp,
 }: Props) {
-  const [isEditing, setIsEditing] = React.useState(false)
+  const router = useRouter()
+  const params = useParams()
   const { onOpen } = useModal()
+  const [isEditing, setIsEditing] = React.useState(false)
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -102,6 +106,13 @@ export default function ChatItem({
   const isPDF = fileType?.toLowerCase() === 'pdf' && fileUrl
   const isImage = !isPDF && fileUrl
 
+  const onMemberClick = () => {
+    if (member.id === currentMember.id) {
+      return
+    }
+    router.push(`/servers/${params?.serverId}/conversations/${member?.id}`)
+  }
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const url = qs.stringifyUrl({
@@ -120,14 +131,20 @@ export default function ChatItem({
   return (
     <div className="group relative flex w-full items-center p-4 transition hover:bg-black/5">
       <div className="group flex w-full items-start gap-x-2">
-        <div className="cursor-pointer transition hover:drop-shadow-md">
+        <div
+          className="cursor-pointer transition hover:drop-shadow-md"
+          onClick={onMemberClick}
+        >
           <UserAvatar src={member.profile.imageUrl} />
         </div>
 
         <div className="flex w-full flex-col">
           <div className="flex items-center gap-x-2">
             <div className="flex items-center">
-              <p className="cursor-pointer text-sm font-semibold hover:underline">
+              <p
+                className="cursor-pointer text-sm font-semibold hover:underline"
+                onClick={onMemberClick}
+              >
                 {member.profile.name}
               </p>
 
