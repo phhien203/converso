@@ -3,7 +3,7 @@
 import { Member, Message, Profile } from '@prisma/client'
 import { format } from 'date-fns'
 import { Loader2Icon, ServerCrashIcon } from 'lucide-react'
-import { Fragment } from 'react'
+import React, { ElementRef, Fragment } from 'react'
 
 import ChatItem from '@/components/chat/chat-item'
 import ChatWelcome from '@/components/chat/chat-welcome'
@@ -43,6 +43,9 @@ export default function ChatMessages({
   const addKey = `chat:${chatId}:messages`
   const updateKey = `chat:${chatId}:messages:update`
 
+  const chatRef = React.useRef<ElementRef<'div'>>(null)
+  const bottomRef = React.useRef<ElementRef<'div'>>(null)
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useChatQuery({
       apiUrl,
@@ -75,15 +78,29 @@ export default function ChatMessages({
   }
 
   return (
-    <div className="flex flex-1 flex-col overflow-y-auto py-4">
-      <div className="flex-1"></div>
-      <ChatWelcome type={type} name={name} />
+    <div ref={chatRef} className="flex flex-1 flex-col overflow-y-auto py-4">
+      {!hasNextPage && <div className="flex-1"></div>}
+      {!hasNextPage && <ChatWelcome type={type} name={name} />}
+
+      {hasNextPage && (
+        <div className="flex justify-center">
+          {isFetchingNextPage ? (
+            <Loader2Icon className="my-4 h-6 w-6 animate-spin text-zinc-500" />
+          ) : (
+            <button
+              onClick={() => fetchNextPage()}
+              className="my-4 text-xs text-zinc-500 transition hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300"
+            >
+              Load previous messages
+            </button>
+          )}
+        </div>
+      )}
 
       <div className="mt-auto flex flex-col-reverse">
         {data?.pages?.map((group, i) => (
           <Fragment key={i}>
             {group?.items?.map((message: MessageWithMemberWithProfile) => (
-              // <div key={message.id}>{message.content}</div>
               <ChatItem
                 key={message.id}
                 id={message.id}
@@ -101,6 +118,8 @@ export default function ChatMessages({
           </Fragment>
         ))}
       </div>
+
+      <div ref={bottomRef}></div>
     </div>
   )
 }
