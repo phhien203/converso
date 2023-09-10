@@ -21,7 +21,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [socket, setSocket] = React.useState(null)
   const [isConnected, setIsConnected] = React.useState(false)
 
-  React.useState(() => {
+  React.useEffect(() => {
     const socketInstance = new (ClientIO as any)(
       process.env.NEXT_PUBLIC_SITE_URL!,
       {
