@@ -1,7 +1,9 @@
+import { redirectToSignIn } from '@clerk/nextjs'
+import { Server } from '@prisma/client'
+import { redirect } from 'next/navigation'
+
 import { currentProfile } from '@/lib/current-profile'
 import { prisma } from '@/lib/db'
-import { redirectToSignIn } from '@clerk/nextjs'
-import { redirect } from 'next/navigation'
 
 export default async function InviteCodePage({
   params,
@@ -33,8 +35,10 @@ export default async function InviteCodePage({
     return redirect(`/servers/${existingServer.id}}`)
   }
 
+  let server: Server | null = null
+
   try {
-    const server = await prisma.server.update({
+    server = await prisma.server.update({
       where: {
         inviteCode: params.inviteCode,
       },
@@ -48,11 +52,8 @@ export default async function InviteCodePage({
         },
       },
     })
-
-    if (server) {
-      return redirect(`/servers/${server.id}`)
-    }
-  } catch {
+  } catch (error) {
+    console.log('[InviteCodePage]', error)
     return (
       <div className="mx-auto mt-4 flex max-w-lg flex-col space-y-2">
         <h2 className="text-center text-2xl font-semibold">
@@ -66,13 +67,9 @@ export default async function InviteCodePage({
     )
   }
 
-  return (
-    <div className="mx-auto mt-4 flex max-w-lg flex-col space-y-2">
-      <h2 className="text-2xl font-semibold">Invalid invite code</h2>
-      <p className="text-sm">
-        The current invite code is invalid. Please contact your admin for
-        support.
-      </p>
-    </div>
-  )
+  if (server) {
+    return redirect(`/servers/${server.id}`)
+  } else {
+    return null
+  }
 }

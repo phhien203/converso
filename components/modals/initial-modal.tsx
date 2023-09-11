@@ -10,14 +10,6 @@ import * as z from 'zod'
 import FileUpload from '@/components/file-upload'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import {
   Form,
   FormControl,
   FormField,
@@ -66,72 +58,67 @@ export default function InitialModal() {
   }
 
   return (
-    <Dialog open>
-      <DialogContent className="overflow-hidden bg-white p-0 text-black">
-        <DialogHeader className="px-6 pt-8">
-          <DialogTitle className="text-center text-2xl font-bold">
-            Customize your server
-          </DialogTitle>
+    <div className="mx-auto flex h-full max-w-sm flex-col items-center justify-center">
+      <div className="text-center text-2xl font-bold">
+        Create your first server
+      </div>
+      <div className="py-1 text-center text-xs text-zinc-500">
+        Give your server a personality with a name and an image. You can always
+        change it later.
+      </div>
 
-          <DialogDescription className="text-center text-zinc-500">
-            Give your server a personality with a name and an image. You can
-            always change it later.
-          </DialogDescription>
-        </DialogHeader>
-
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="space-y-8 px-6">
-              <div className="flex items-center justify-center text-center">
-                <FormField
-                  control={form.control}
-                  name="imageUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <FileUpload
-                          endpoint="serverImage"
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <div className="space-y-8 px-6">
+            <div className="flex items-center justify-center text-center">
               <FormField
                 control={form.control}
-                name="name"
+                name="imageUrl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
-                      Server name
-                    </FormLabel>
-
                     <FormControl>
-                      <Input
-                        disabled={isLoading}
-                        placeholder="Enter server name"
-                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
-                        {...field}
+                      <FileUpload
+                        endpoint="serverImage"
+                        value={field.value}
+                        onChange={field.onChange}
                       />
                     </FormControl>
-
-                    <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
 
-            <DialogFooter className="bg-gray-100 px-6 py-4">
-              <Button variant="primary" disabled={isLoading}>
-                Create
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
+                    Server name
+                  </FormLabel>
+
+                  <FormControl>
+                    <Input
+                      disabled={isLoading}
+                      placeholder="Enter server name"
+                      className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="px-6 py-1">
+            <Button variant="primary" disabled={isLoading}>
+              Create
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
   )
 }
